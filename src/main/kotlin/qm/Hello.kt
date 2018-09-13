@@ -12,18 +12,22 @@ class MyIntWrapper(val value:Int):Serializable
 fun main(args: Array<String>) {
     System.setProperty(SimpleLogger.LOG_FILE_KEY, "System.err")
 
+    val tempDir = System.getProperty("java.io.tmpdir")
+
+    println(tempDir)
+
     val uuid = UUID.randomUUID()
+
     val map  = ChronicleMap
             .of(UUID::class.java, MyIntWrapper::class.java)
             .name("access-count-map")
             .averageKey(UUID(10, 10))
             .averageValueSize(10.0)
             .entries(10000)
-            .createOrRecoverPersistedTo(File(System.getProperty("java.io.tmpdir") + "access-count-map.dat"))
+            .createOrRecoverPersistedTo(File(tempDir + "/access-count-map.dat"))
 
     val app = Javalin.create().start(7000)
 
-    val tempDir = System.getProperty("java.io.tmpdir")
 
     app.get("/") {
         ctx ->
